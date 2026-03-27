@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentorship Match Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8fc;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .question-card {
+      margin-bottom: 22px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fafbfe;
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .option-wrapper {
+      display: inline-block;
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    .option-label {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: 0.2s ease;
+      user-select: none;
+    }
+
+    .option-label:hover {
+      background: #eef4ff;
+    }
+
+    input[type="radio"]:checked + .option-label {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 14px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      background: #1f4fc7;
+    }
+
+    .secondary-btn {
+      background: #6b7280;
+    }
+
+    .secondary-btn:hover {
+      background: #4b5563;
+    }
+
+    .result {
+      display: none;
+      margin-top: 36px;
+      padding: 24px;
+      border-radius: 14px;
+      background: #f0f7ff;
+      border: 1px solid #cfe2ff;
+    }
+
+    .result-section {
+      margin-top: 20px;
+      background: white;
+      border: 1px solid #dde6f3;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    ul {
+      margin-top: 10px;
+      padding-left: 20px;
+      line-height: 1.7;
+    }
+
+    .scores {
+      margin-top: 20px;
+    }
+
+    .score-row {
+      margin: 14px 0;
+    }
+
+    .bar-bg {
+      background: #e5e7eb;
+      border-radius: 999px;
+      height: 12px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: #2563eb;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #666;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .action-row {
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .action-row button {
+      display: inline-block;
+      margin: 8px;
+    }
+
+    .highlight {
+      color: #1d4ed8;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .option-label {
+        width: 100%;
+        text-align: center;
+      }
+
+      .option-wrapper {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mentorship Match Finder</h1>
+    <p class="subtitle">
+      Answer a few questions about how you learn, grow, and prefer to be guided.<br>
+      Then discover what kind of mentor may fit you best.
+    </p>
+
+    <div id="quiz"></div>
+
+    <button id="submitBtn">See My Result</button>
+
+    <div class="result" id="result">
+      <h2 id="resultTitle"></h2>
+      <p id="resultSummary" style="text-align:center; line-height:1.7;"></p>
+
+      <div class="result-section">
+        <h3>Why this mentor style fits you</h3>
+        <p id="resultDescription" style="line-height:1.8;"></p>
+      </div>
+
+      <div class="result-section">
+        <h3>How to get the most out of this mentorship</h3>
+        <ul id="tipsList"></ul>
+      </div>
+
+      <div class="result-section scores">
+        <h3>Your match scores</h3>
+        <div id="scoreBoard"></div>
+      </div>
+
+      <div class="action-row">
+        <button onclick="restartQuiz()" class="secondary-btn">Try Again</button>
+      </div>
+
+      <p class="note">
+        * This is a self-reflection tool, not a formal psychological assessment.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "I learn best when someone is emotionally encouraging and helps me build confidence.",
+        weights: { supportive: 2, handsOn: 1 }
+      },
+      {
+        text: "I grow when someone pushes me with high standards and honest feedback.",
+        weights: { challenging: 2, strategic: 1 }
+      },
+      {
+        text: "I prefer mentors who help me see the big picture and long-term direction.",
+        weights: { strategic: 2, supportive: 1 }
+      },
+      {
+        text: "I appreciate mentors who give concrete advice and practical next steps.",
+        weights: { handsOn: 2, strategic: 1 }
+      },
+      {
+        text: "When I struggle, I want a mentor who first understands how I’m feeling.",
+        weights: { supportive: 2 }
+      },
+      {
+        text: "I don’t mind being challenged directly if it helps me improve faster.",
+        weights: { challenging: 2 }
+      },
+      {
+        text: "I feel more motivated when I know how today’s effort connects to my future goals.",
+        weights: { strategic: 2 }
+      },
+      {
+        text: "I prefer examples, demonstrations, and specific guidance over abstract advice.",
+        weights: { handsOn: 2 }
+      },
+      {
+        text: "Too much criticism can discourage me, even if it is meant to help.",
+        weights: { supportive: 2 }
+      },
+      {
+        text: "I respect mentors who are demanding and expect me to rise to the occasion.",
+        weights: { challenging: 2 }
+      },
+      {
+        text: "I value structure, planning, and clear milestones in mentorship.",
+        weights: { strategic: 2, handsOn: 1 }
+      },
+      {
+        text: "I like mentors who help me solve real problems step by step.",
+        weights: { handsOn: 2 }
+      }
+    ];
+
+    const mentorStyles = {
+      supportive: {
+        title: "Supportive Mentor",
+        summary: "You may thrive most with a mentor who is encouraging, empathetic, and relationship-centered.",
+        description:
+          "You likely benefit from mentorship that creates psychological safety and builds confidence. A supportive mentor can help you grow by making it easier to ask questions, recover from setbacks, and stay motivated. This style tends to work well for people who value trust, encouragement, and a sense of being understood.",
+        tips: [
+          "Be open about what kind of support helps you most—encouragement, reassurance, or regular check-ins.",
+          "Ask for constructive feedback too, so the mentorship stays warm but still growth-oriented.",
+          "When you feel stuck, try expressing both your emotional concern and the practical help you need.",
+          "A supportive mentor may be great for confidence-building, but you may still want to request clearer performance goals."
+        ]
+      },
+      challenging: {
+        title: "Challenging Mentor",
+        summary: "You may thrive most with a mentor who is direct, demanding, and growth-pushing.",
+        description:
+          "You likely respond well to mentors who set a high bar and push you beyond your comfort zone. A challenging mentor can help accelerate your growth by giving blunt feedback, expecting accountability, and encouraging resilience. This style often fits people who are energized by ambition, stretch goals, and honest evaluation.",
+        tips: [
+          "Let your mentor know that you welcome direct feedback, but also clarify how much intensity is productive for you.",
+          "When feedback feels harsh, try translating it into specific action points instead of taking it personally.",
+          "Ask for examples of what excellence looks like so you can meet high expectations more clearly.",
+          "Make space to reflect on progress, not just shortcomings, so the relationship remains sustainable."
+        ]
+      },
+      strategic: {
+        title: "Strategic Mentor",
+        summary: "You may thrive most with a mentor who helps you think long-term, set direction, and prioritize wisely.",
+        description:
+          "You likely value mentorship that goes beyond immediate tasks and helps you understand where you are heading. A strategic mentor can help you connect short-term work with long-term goals, identify opportunities, and make smarter decisions about growth. This style is especially useful for people who want clarity, structure, and vision.",
+        tips: [
+          "Ask big-picture questions about direction, timing, priorities, and long-term development.",
+          "Request help breaking large goals into concrete milestones so strategy turns into action.",
+          "Before meetings, prepare updates that include not only what you did, but where you think it is leading.",
+          "A strategic mentor may focus less on emotional support, so ask directly if you need reassurance or encouragement."
+        ]
+      },
+      handsOn: {
+        title: "Hands-on Mentor",
+        summary: "You may thrive most with a mentor who is practical, concrete, and actively involved in problem-solving.",
+        description:
+          "You likely learn best when guidance is specific, actionable, and immediately usable. A hands-on mentor can support your growth by demonstrating processes, offering examples, and helping you move through challenges step by step. This style tends to fit people who prefer doing, testing, and applying rather than only discussing ideas.",
+        tips: [
+          "Come to meetings with specific questions or problems so your mentor can give targeted help.",
+          "Ask for examples, templates, demonstrations, or sample workflows when possible.",
+          "Be careful not to become overly dependent on step-by-step guidance—use it to build your own judgment.",
+          "Once a problem is solved, reflect on the underlying principle so you can apply it independently next time."
+        ]
+      }
+    };
+
+    const quizContainer = document.getElementById("quiz");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultBox = document.getElementById("result");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultSummary = document.getElementById("resultSummary");
+    const resultDescription = document.getElementById("resultDescription");
+    const tipsList = document.getElementById("tipsList");
+    const scoreBoard = document.getElementById("scoreBoard");
+
+    function renderQuiz() {
+      quizContainer.innerHTML = "";
+
+      questions.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+
+        const questionText = document.createElement("div");
+        questionText.className = "question-text";
+        questionText.textContent = `${index + 1}. ${q.text}`;
+        card.appendChild(questionText);
+
+        const options = document.createElement("div");
+        options.className = "options";
+
+        const scaleLabels = [
+          "1 - Strongly disagree",
+          "2 - Disagree",
+          "3 - Neutral",
+          "4 - Agree",
+          "5 - Strongly agree"
+        ];
+
+        for (let i = 1; i <= 5; i++) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "option-wrapper";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `question-${index}`;
+          input.id = `q${index}-opt${i}`;
+          input.value = i;
+
+          const label = document.createElement("label");
+          label.className = "option-label";
+          label.htmlFor = input.id;
+          label.textContent = scaleLabels[i - 1];
+
+          wrapper.appendChild(input);
+          wrapper.appendChild(label);
+          options.appendChild(wrapper);
+        }
+
+        card.appendChild(options);
+        quizContainer.appendChild(card);
+      });
+    }
+
+    function calculateScores() {
+      const scores = {
+        supportive: 0,
+        challenging: 0,
+        strategic: 0,
+        handsOn: 0
+      };
+
+      for (let i = 0; i < questions.length; i++) {
+        const selected = document.querySelector(`input[name="question-${i}"]:checked`);
+
+        if (!selected) {
+          alert(`Please answer question ${i + 1}.`);
+          return null;
+        }
+
+        const answerValue = parseInt(selected.value, 10);
+        const weights = questions[i].weights;
+
+        for (const style in weights) {
+          scores[style] += answerValue * weights[style];
+        }
+      }
+
+      return scores;
+    }
+
+    function getSortedStyles(scores) {
+      return Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    }
+
+    function renderResult(scores) {
+      const sortedStyles = getSortedStyles(scores);
+      const [topStyleKey, topScore] = sortedStyles[0];
+      const [secondStyleKey, secondScore] = sortedStyles[1];
+
+      const topStyle = mentorStyles[topStyleKey];
+      const secondStyle = mentorStyles[secondStyleKey];
+
+      resultTitle.innerHTML = `Your Best Match: <span class="highlight">${topStyle.title}</span>`;
+      resultSummary.innerHTML = `
+        ${topStyle.summary}<br><br>
+        <strong>Secondary match:</strong> ${secondStyle.title}
+      `;
+      resultDescription.textContent = topStyle.description;
+
+      tipsList.innerHTML = "";
+      topStyle.tips.forEach(tip => {
+        const li = document.createElement("li");
+        li.textContent = tip;
+        tipsList.appendChild(li);
+      });
+
+      const styleDisplayNames = {
+        supportive: "Supportive Mentor",
+        challenging: "Challenging Mentor",
+        strategic: "Strategic Mentor",
+        handsOn: "Hands-on Mentor"
+      };
+
+      const maxScore = sortedStyles[0][1];
+
+      scoreBoard.innerHTML = "";
+      for (const [styleKey, score] of sortedStyles) {
+        const row = document.createElement("div");
+        row.className = "score-row";
+
+        const label = document.createElement("div");
+        label.innerHTML = `<strong>${styleDisplayNames[styleKey]}</strong>: ${score}`;
+
+        const barBg = document.createElement("div");
+        barBg.className = "bar-bg";
+
+        const barFill = document.createElement("div");
+        barFill.className = "bar-fill";
+        barFill.style.width = `${(score / maxScore) * 100}%`;
+
+        barBg.appendChild(barFill);
+        row.appendChild(label);
+        row.appendChild(barBg);
+        scoreBoard.appendChild(row);
+      }
+
+      resultBox.style.display = "block";
+      resultBox.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function restartQuiz() {
+      const radios = document.querySelectorAll('input[type="radio"]');
+      radios.forEach(radio => radio.checked = false);
+      resultBox.style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    submitBtn.addEventListener("click", () => {
+      const scores = calculateScores();
+      if (scores) {
+        renderResult(scores);
+      }
+    });
+
+    renderQuiz();
+  </script>
+</body>
+</html>
