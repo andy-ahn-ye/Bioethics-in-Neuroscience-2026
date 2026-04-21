@@ -3,64 +3,207 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mentorship Match Finder</title>
+  <title>Research Mentorship Match Finder</title>
   <style>
+    :root {
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #dbe3ef;
+      --primary: #2563eb;
+      --primary-soft: #eaf1ff;
+      --accent: #0f172a;
+      --success: #1d4ed8;
+      --warning: #b45309;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f6f8fc;
-      color: #222;
-      line-height: 1.5;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
     }
 
-    .container {
+    .page {
       width: 100%;
-      max-width: 900px;
-      margin: 20px auto;
-      background: #ffffff;
-      padding: 20px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .hero,
+    .section,
+    .result-card,
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px 24px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .hero p {
+      margin: 10px auto 0;
+      max-width: 760px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .section {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .progress-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(to bottom, rgba(246,248,252,0.98), rgba(246,248,252,0.9));
+      padding: 10px 0 14px;
+      backdrop-filter: blur(6px);
+    }
+
+    .progress-card {
+      background: var(--card);
+      border: 1px solid var(--line);
       border-radius: 16px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
     }
 
-    h1, h2, h3 {
-      margin-top: 0;
-      text-align: center;
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 8px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 24px;
-      font-size: 15px;
+    .progress-meta .muted {
+      color: var(--muted);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+
+    .group-title {
+      margin: 24px 0 10px;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .group-subtitle {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
     .question-card {
-      margin-bottom: 18px;
-      padding: 16px;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      background: #fafcff;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .question-header {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .q-number {
+      min-width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
     }
 
     .question-text {
       font-size: 17px;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin: 0;
+    }
+
+    .question-note {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .options {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .option-item {
-      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .option-item input[type="radio"] {
@@ -70,446 +213,1170 @@
     .option-label {
       display: block;
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
+      text-align: center;
+      padding: 12px 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
       background: #fff;
       cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 14px;
+      font-size: 13px;
+      transition: all 0.15s ease;
+      user-select: none;
     }
 
     .option-label:hover {
-      background: #eef4ff;
+      background: var(--primary-soft);
+      border-color: #bfd1ff;
     }
 
     .option-item input[type="radio"]:checked + .option-label {
-      background: #2563eb;
+      background: var(--primary);
       color: #fff;
-      border-color: #2563eb;
+      border-color: var(--primary);
     }
 
-    .main-btn,
-    .secondary-btn {
-      display: block;
-      width: 100%;
-      max-width: 280px;
-      margin: 24px auto 0;
-      padding: 14px 18px;
+    .axis-tag {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    button {
       border: none;
-      border-radius: 10px;
-      font-size: 16px;
+      border-radius: 14px;
       cursor: pointer;
+      font-size: 16px;
+      padding: 14px 18px;
+      transition: transform 0.05s ease, opacity 0.15s ease, background 0.15s ease;
     }
 
-    .main-btn {
-      background: #2563eb;
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .primary-btn {
+      background: var(--primary);
       color: #fff;
+      min-width: 220px;
     }
 
-    .main-btn:hover {
-      background: #1d4ed8;
+    .primary-btn:hover {
+      opacity: 0.95;
     }
 
     .secondary-btn {
-      background: #6b7280;
-      color: #fff;
+      background: #eef2f7;
+      color: var(--accent);
+      border: 1px solid var(--line);
+      min-width: 160px;
     }
 
-    .secondary-btn:hover {
-      background: #4b5563;
-    }
-
-    .result {
+    .result-card {
       display: none;
-      margin-top: 28px;
-      padding: 20px;
-      border-radius: 14px;
-      background: #f0f7ff;
-      border: 1px solid #cfe2ff;
+      margin-top: 26px;
+      padding: 22px;
     }
 
-    .result-section {
+    .result-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .result-kicker {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .result-title {
+      font-size: 32px;
+      line-height: 1.15;
+      margin: 0 0 8px;
+    }
+
+    .result-code {
+      display: inline-block;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid #bfd1ff;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .result-summary {
+      max-width: 760px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
       margin-top: 18px;
+    }
+
+    .info-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
       padding: 16px;
       background: #fff;
-      border: 1px solid #dde6f3;
-      border-radius: 12px;
     }
 
-    .result-section p,
-    .result-section li {
-      font-size: 15px;
+    .info-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
     }
 
-    .highlight {
-      color: #1d4ed8;
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .info-card ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    .info-card li + li {
+      margin-top: 6px;
+    }
+
+    .axis-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .axis-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .axis-card h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .axis-label {
       font-weight: 700;
+      margin-bottom: 6px;
     }
 
-    ul {
-      padding-left: 20px;
-      margin: 10px 0 0;
+    .axis-percent {
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
     }
 
-    .score-row {
-      margin: 14px 0;
+    .axis-description {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
     }
 
-    .bar-bg {
+    .axis-meter {
       width: 100%;
       height: 12px;
       background: #e5e7eb;
       border-radius: 999px;
       overflow: hidden;
-      margin-top: 6px;
     }
 
-    .bar-fill {
+    .axis-meter-fill {
       height: 100%;
-      background: #2563eb;
+      background: var(--primary);
       border-radius: 999px;
+      transition: width 0.25s ease;
     }
 
-    .note {
-      text-align: center;
-      color: #666;
-      font-size: 13px;
+    .axis-scale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
       margin-top: 18px;
     }
 
-    @media (max-width: 600px) {
-      body {
-        background: #ffffff;
+    .note-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .note-card h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .note-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .error {
+      color: #b91c1c;
+      text-align: center;
+      font-weight: 700;
+      margin-top: 12px;
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      .hero h1,
+      .result-title {
+        font-size: 26px;
       }
 
-      .container {
-        margin: 0;
-        min-height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 16px;
+      .options {
+        grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: 24px;
-      }
-
-      .subtitle {
-        font-size: 14px;
-      }
-
-      .question-text {
-        font-size: 16px;
+      .results-grid,
+      .axis-grid,
+      .notes-grid {
+        grid-template-columns: 1fr;
       }
 
       .option-label {
-        font-size: 14px;
-        padding: 12px;
+        text-align: left;
+        padding: 12px 14px;
+      }
+
+      .page {
+        padding: 16px 12px 40px;
+      }
+
+      .hero,
+      .section,
+      .question-card,
+      .result-card {
+        border-radius: 16px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Mentorship Match Finder</h1>
-    <p class="subtitle">
-      Answer a few questions about how you learn, grow, and prefer to be guided.
-      Then discover what kind of mentor may fit you best.
-    </p>
-
-    <div id="quiz"></div>
-
-    <button id="submitBtn" class="main-btn">See My Result</button>
-
-    <div id="result" class="result">
-      <h2 id="resultTitle"></h2>
-      <p id="resultSummary" style="text-align: center;"></p>
-
-      <div class="result-section">
-        <h3>Why this mentor style fits you</h3>
-        <p id="resultDescription"></p>
-      </div>
-
-      <div class="result-section">
-        <h3>How to get the most out of this mentorship</h3>
-        <ul id="tipsList"></ul>
-      </div>
-
-      <div class="result-section">
-        <h3>Your match scores</h3>
-        <div id="scoreBoard"></div>
-      </div>
-
-      <button onclick="restartQuiz()" class="secondary-btn">Try Again</button>
-
-      <p class="note">
-        * This is a self-reflection tool, not a formal psychological assessment.
+  <div class="page">
+    <div class="hero">
+      <h1>Research Mentorship Match Finder</h1>
+      <p>
+        This tool helps you reflect on the kind of mentorship and lab ecology in which you are most likely to thrive.
+        It does not tell you the “best” lab. It helps you think about fit.
       </p>
+      <div class="pill-row">
+        <div class="pill">3 core axes</div>
+        <div class="pill">8 fit types</div>
+        <div class="pill">Percent-based results</div>
+        <div class="pill">Lab-fit advice</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>How it works</h2>
+      <p>
+        Your result is based on three hidden dimensions:
+        <strong>Guidance Preference</strong> (Directed ↔ Autonomous),
+        <strong>Feedback Tone</strong> (Challenging ↔ Supportive), and
+        <strong>Lab Ecology</strong> (Resource-rich ↔ Mentor-close).
+        You will also answer a few optional profile questions to make your result more practical.
+      </p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-card">
+        <div class="progress-meta">
+          <div><strong>Progress</strong></div>
+          <div class="muted"><span id="answeredCount">0</span> / <span id="totalCount">24</span> answered</div>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <form id="quizForm">
+      <h2 class="group-title">Part 1. Core scored questions</h2>
+      <p class="group-subtitle">
+        These questions determine your three-axis fit profile and final type.
+      </p>
+      <div id="scoredQuestions"></div>
+
+      <h2 class="group-title">Part 2. Optional profile notes</h2>
+      <p class="group-subtitle">
+        These questions do not determine your type directly. They help personalize your result.
+      </p>
+      <div id="optionalQuestions"></div>
+
+      <div class="actions">
+        <button type="button" class="primary-btn" id="resultBtn">See My Result</button>
+        <button type="button" class="secondary-btn" id="resetBtn">Reset</button>
+      </div>
+      <div class="error" id="errorMessage">Please answer all questions before viewing your result.</div>
+    </form>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-kicker">Your mentorship & lab fit</div>
+        <h2 class="result-title" id="resultTitle"></h2>
+        <div class="result-code" id="resultCode"></div>
+        <p class="result-summary" id="resultSummary"></p>
+      </div>
+
+      <div class="axis-grid" id="axisGrid"></div>
+
+      <div class="results-grid">
+        <div class="info-card">
+          <h3>Core interpretation</h3>
+          <p id="fitText"></p>
+        </div>
+        <div class="info-card">
+          <h3>Best-fit lab</h3>
+          <ul id="labList"></ul>
+        </div>
+        <div class="info-card">
+          <h3>Likely strengths</h3>
+          <ul id="strengthsList"></ul>
+        </div>
+        <div class="info-card">
+          <h3>Blind spots / risks</h3>
+          <ul id="risksList"></ul>
+        </div>
+        <div class="info-card">
+          <h3>How to improve your mentorship fit</h3>
+          <ul id="growthList"></ul>
+        </div>
+        <div class="info-card">
+          <h3>What to tell your mentor</h3>
+          <ul id="mentorTipsList"></ul>
+        </div>
+      </div>
+
+      <div class="notes-grid" id="notesGrid"></div>
+
+      <div class="actions">
+        <button type="button" class="secondary-btn" id="retakeBtn">Retake Test</button>
+      </div>
+
+      <div class="footer-note">
+        This is a self-reflection tool for mentorship and lab fit. It is not a clinical or formal psychological assessment.
+      </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const questions = [
+    const scaleLabels = [
+      "1 — Strongly disagree",
+      "2 — Disagree",
+      "3 — Neutral",
+      "4 — Agree",
+      "5 — Strongly agree"
+    ];
+
+    const scoredQuestions = [
+      {
+        id: "q1",
+        text: "I work best when my mentor gives me clear direction on what to do next.",
+        axis: "guidance",
+        direction: "D",
+        note: "Clear direction, structure, and next steps."
+      },
+      {
+        id: "q2",
+        text: "I prefer figuring out research problems on my own, even if it takes longer.",
+        axis: "guidance",
+        direction: "A",
+        note: "Independence, self-direction, and exploration."
+      },
+      {
+        id: "q3",
+        text: "Frequent check-ins and direct feedback help me stay on track.",
+        axis: "guidance",
+        direction: "D",
+        note: "Regular supervision and alignment."
+      },
+      {
+        id: "q4",
+        text: "I feel more motivated when I can shape my own research direction.",
+        axis: "guidance",
+        direction: "A",
+        note: "Ownership and autonomy."
+      },
+      {
+        id: "q5",
+        text: "I prefer receiving concrete tasks rather than only discussing broad goals.",
+        axis: "guidance",
+        direction: "D",
+        note: "Detailed tasks over abstract direction."
+      },
+      {
+        id: "q6",
+        text: "Too much supervision makes it harder for me to think independently.",
+        axis: "guidance",
+        direction: "A",
+        note: "Space to think without over-management."
+      },
+      {
+        id: "q7",
+        text: "I grow most when I receive direct, critical feedback.",
+        axis: "tone",
+        direction: "C",
+        note: "Challenge, rigor, and blunt feedback."
+      },
+      {
+        id: "q8",
+        text: "I do better when my mentor first tries to understand and encourage me.",
+        axis: "tone",
+        direction: "S",
+        note: "Encouragement and emotional understanding."
+      },
+      {
+        id: "q9",
+        text: "High standards and difficult expectations motivate me.",
+        axis: "tone",
+        direction: "C",
+        note: "Demanding environments and stretch goals."
+      },
+      {
+        id: "q10",
+        text: "Too much criticism can reduce my confidence and performance.",
+        axis: "tone",
+        direction: "S",
+        note: "Psychological safety matters."
+      },
+      {
+        id: "q11",
+        text: "I appreciate mentors who push me beyond what feels comfortable.",
+        axis: "tone",
+        direction: "C",
+        note: "Growth through pressure and challenge."
+      },
+      {
+        id: "q12",
+        text: "Psychological safety is essential for me to do my best work.",
+        axis: "tone",
+        direction: "S",
+        note: "Trust and support as performance conditions."
+      },
+      {
+        id: "q13",
+        text: "I would join a lab with strong funding, tools, and networks even if the PI is less directly involved.",
+        axis: "ecology",
+        direction: "R",
+        note: "Resources and opportunities over closeness."
+      },
+      {
+        id: "q14",
+        text: "I would rather work in a smaller lab where I can receive close mentorship from the PI.",
+        axis: "ecology",
+        direction: "M",
+        note: "Direct mentorship over large-lab scale."
+      },
+      {
+        id: "q15",
+        text: "Access to multiple projects and opportunities matters more to me than close supervision.",
+        axis: "ecology",
+        direction: "R",
+        note: "Breadth, network, and optionality."
+      },
+      {
+        id: "q16",
+        text: "Even if resources are more limited, regular direct interaction with the PI is very important to me.",
+        axis: "ecology",
+        direction: "M",
+        note: "Hands-on mentor access."
+      },
+      {
+        id: "q17",
+        text: "I am comfortable navigating a complex lab environment if it gives me more opportunities.",
+        axis: "ecology",
+        direction: "R",
+        note: "Can tolerate complexity for upside."
+      },
+      {
+        id: "q18",
+        text: "I learn best in environments where expectations and relationships are more personal and direct.",
+        axis: "ecology",
+        direction: "M",
+        note: "Close-knit, relational training environment."
+      }
+    ];
+
+    const optionalQuestions = [
+      {
+        id: "o1",
+        text: "I am more interested in high-risk, high-reward projects than safer projects with predictable outcomes.",
+        type: "risk"
+      },
+      {
+        id: "o2",
+        text: "I perform better when my work schedule is flexible.",
+        type: "flexibility"
+      },
+      {
+        id: "o3",
+        text: "A healthy life outside the lab is as important to me as research success.",
+        type: "worklife"
+      },
+      {
+        id: "o4",
+        text: "I value a socially active lab culture.",
+        type: "social"
+      },
+      {
+        id: "o5",
+        text: "I am mainly considering academia as my long-term path.",
+        type: "career"
+      },
+      {
+        id: "o6",
+        text: "I prefer quick communication tools such as Slack over formal email.",
+        type: "communication"
+      }
+    ];
+
+    const typeProfiles = {
+      DCR: {
+        title: "The Guided Achiever",
+        axes: "Directed + Challenging + Resource-rich",
+        summary: "You are likely to thrive in ambitious, high-resource environments where expectations are high and progress is pushed forward clearly.",
+        fit: "You benefit from structure, demanding standards, and environments with strong infrastructure. You may do especially well in labs where there is a clear path forward, a strong project ecosystem, and a culture that rewards rapid growth.",
+        strengths: [
+          "You may learn and improve quickly in demanding environments.",
+          "You are likely to make strong use of large projects, networks, and resources.",
+          "You can be resilient in ambitious, high-performance settings."
+        ],
+        risks: [
+          "Your autonomy may be underdeveloped if you rely too heavily on direction.",
+          "You may be vulnerable to burnout if challenge turns into chronic pressure.",
+          "You may feel psychologically distant from your mentor in impersonal lab cultures."
+        ],
+        bestLab: [
+          "Established PI",
+          "Large or prestigious lab",
+          "Strong infrastructure and funding",
+          "High-performance culture with clear expectations"
+        ],
+        growthAdvice: [
+          "Keep developing independent thinking, not just execution skills.",
+          "Ask not only “what should I do?” but also “why this direction?”",
+          "Monitor whether challenge is still productive rather than draining."
+        ],
+        mentorTips: [
+          "I work well with clear direction and high expectations.",
+          "I appreciate direct feedback, but I also want to understand the reasoning behind decisions.",
+          "It helps me when goals and standards are made explicit."
+        ]
+      },
+      DCM: {
+        title: "The Structured Builder",
+        axes: "Directed + Challenging + Mentor-close",
+        summary: "You thrive when a mentor is actively involved, sets high standards, and helps you improve through close, direct guidance.",
+        fit: "You may do best in a setting where your mentor is deeply engaged in your training and willing to push you toward higher performance. Frequent interaction and rigorous feedback can be powerful drivers for your growth.",
+        strengths: [
+          "You may develop technical and research skills quickly under active supervision.",
+          "You can learn a great deal from close mentorship.",
+          "You may fit especially well with hands-on or younger PIs who are deeply involved."
+        ],
+        risks: [
+          "You may become too dependent on one mentor’s direction.",
+          "A mismatch with the PI may feel especially stressful.",
+          "You may get boxed into a narrower environment if you do not build independence."
+        ],
+        bestLab: [
+          "Smaller lab",
+          "Active PI involvement",
+          "Frequent feedback and close interaction",
+          "Strong training culture"
+        ],
+        growthAdvice: [
+          "Actively build independence over time.",
+          "Ask for both feedback and room to try your own ideas.",
+          "Do not confuse close guidance with the only valid way to grow."
+        ],
+        mentorTips: [
+          "I learn well with frequent interaction and high standards.",
+          "Direct feedback helps me, but I also want space to build my own judgment.",
+          "It helps when expectations are clear and consistent."
+        ]
+      },
+      DSR: {
+        title: "The Supported Performer",
+        axes: "Directed + Supportive + Resource-rich",
+        summary: "You benefit from clarity and structure, but you also need encouragement and a psychologically safe environment to perform well.",
+        fit: "You may do best in labs with clear systems, stable resources, and humane mentoring cultures. You tend to thrive when expectations are structured but feedback is constructive rather than harsh.",
+        strengths: [
+          "You may perform steadily when roles and expectations are clearly defined.",
+          "You can make strong use of resource-rich environments when support is available.",
+          "You may fit well with labs that have supportive senior trainees or postdocs."
+        ],
+        risks: [
+          "You may struggle in impersonal big-lab cultures.",
+          "Criticism-heavy cultures may undermine your confidence.",
+          "Too little structure may leave you feeling unanchored."
+        ],
+        bestLab: [
+          "Well-funded lab with organized mentoring systems",
+          "Labs with supportive senior trainee culture",
+          "Clear expectations with a humane environment",
+          "Stable, structured training ecosystem"
+        ],
+        growthAdvice: [
+          "Ask explicitly for clear expectations and constructive feedback.",
+          "Learn to tolerate some ambiguity without losing momentum.",
+          "Build multiple sources of support, not only the PI."
+        ],
+        mentorTips: [
+          "I do my best when expectations are clear and feedback is constructive.",
+          "Support helps me stay confident and productive.",
+          "Regular check-ins help me stay aligned."
+        ]
+      },
+      DSM: {
+        title: "The Mentored Learner",
+        axes: "Directed + Supportive + Mentor-close",
+        summary: "You thrive with close, encouraging mentorship and clear direction from someone who is personally invested in your growth.",
+        fit: "You are likely to benefit from hands-on mentorship that combines guidance with trust and encouragement. This may be especially valuable in earlier phases of training, when close support can accelerate learning.",
+        strengths: [
+          "You may learn deeply under close and encouraging guidance.",
+          "Trust-based mentorship can help you grow with confidence.",
+          "This style may be especially helpful during early-stage training."
+        ],
+        risks: [
+          "You may become overly reliant on one mentor.",
+          "Your autonomy may grow more slowly if all direction comes from outside.",
+          "The quality of the PI relationship may strongly shape your experience."
+        ],
+        bestLab: [
+          "Smaller, close-knit lab",
+          "Frequent 1:1 mentoring",
+          "Patient, responsive, engaged PI",
+          "Relational and supportive training environment"
+        ],
+        growthAdvice: [
+          "Gradually practice self-direction.",
+          "Ask not only for help, but also for chances to make decisions.",
+          "Protect against feeling lost whenever support decreases."
+        ],
+        mentorTips: [
+          "I grow well with close guidance and encouragement.",
+          "It helps me when expectations are clear and support is consistent.",
+          "I also want to build independence over time."
+        ]
+      },
+      ACR: {
+        title: "The Independent Striver",
+        axes: "Autonomous + Challenging + Resource-rich",
+        summary: "You thrive when given freedom, high expectations, and access to a wide range of opportunities.",
+        fit: "You may do best in environments that reward initiative and offer intellectual freedom without lowering the bar. Large, well-resourced labs may give you the runway to pursue ambitious ideas on your own terms.",
+        strengths: [
+          "You are likely to be self-driven and opportunity-seeking.",
+          "You may make strong use of big-lab resources and networks.",
+          "You can thrive in cultures that reward initiative and independence."
+        ],
+        risks: [
+          "Too little guidance may become neglect rather than freedom.",
+          "Highly competitive environments may become isolating.",
+          "You may burn out if support is too scarce."
+        ],
+        bestLab: [
+          "Resource-rich lab with intellectual freedom",
+          "Environments where initiative is rewarded",
+          "Many collaborations and high-impact directions",
+          "Strong optionality and access to tools"
+        ],
+        growthAdvice: [
+          "Do not mistake lack of guidance for intellectual freedom.",
+          "Build a support system intentionally.",
+          "Ask for calibration when needed, even if you usually prefer autonomy."
+        ],
+        mentorTips: [
+          "I like freedom and challenging goals.",
+          "I benefit from sharp feedback, but not from being left completely uncalibrated.",
+          "I appreciate autonomy with occasional strategic guidance."
+        ]
+      },
+      ACM: {
+        title: "The Self-Directed Apprentice",
+        axes: "Autonomous + Challenging + Mentor-close",
+        summary: "You want room to think independently, but you still value having an intellectually strong mentor who can challenge you directly.",
+        fit: "You may thrive with a rigorous mentor who respects your independence rather than micromanaging you. You likely value dialogue, pushback, and intellectual intensity more than emotional cushioning.",
+        strengths: [
+          "You can combine autonomy with rigorous feedback.",
+          "A strong mentor may help you mature quickly as an independent thinker.",
+          "You may grow well in intellectually intense, high-dialogue environments."
+        ],
+        risks: [
+          "You may clash with mentors who are too controlling.",
+          "A challenging culture may start to feel personal if expectations are poorly negotiated.",
+          "Misalignment about autonomy can create friction."
+        ],
+        bestLab: [
+          "Intellectually intense small or mid-size lab",
+          "PI who respects independence but gives sharp feedback",
+          "Environment with both rigor and dialogue",
+          "Close mentorship without micromanagement"
+        ],
+        growthAdvice: [
+          "Communicate clearly about when you want input versus space.",
+          "Use criticism as calibration, not identity judgment.",
+          "Seek a mentor who challenges without micromanaging."
+        ],
+        mentorTips: [
+          "I value independence, but I also appreciate sharp intellectual feedback.",
+          "I do best when critique is rigorous without becoming controlling.",
+          "It helps when we are explicit about where I have room to lead."
+        ]
+      },
+      ASR: {
+        title: "The Supported Explorer",
+        axes: "Autonomous + Supportive + Resource-rich",
+        summary: "You thrive when you have room to explore, but also a humane environment that supports your confidence and well-being.",
+        fit: "You may do best in flexible labs that offer opportunity without constant pressure. You likely value freedom, but not at the cost of being invisible or unsupported.",
+        strengths: [
+          "You may be good at creative exploration and trying new ideas.",
+          "You can use freedom productively when support remains available.",
+          "Supportive cultures may help you sustain motivation over the long term."
+        ],
+        risks: [
+          "Too much ambiguity may cause drift.",
+          "You may become invisible in very large labs.",
+          "Lack of self-created structure may slow progress."
+        ],
+        bestLab: [
+          "Flexible lab with strong resources",
+          "Collaborative, humane culture",
+          "Freedom plus accessible support",
+          "Opportunity-rich environment without constant oversight"
+        ],
+        growthAdvice: [
+          "Create your own structure early.",
+          "Ask for feedback before you feel completely stuck.",
+          "Autonomy works best when paired with self-management habits."
+        ],
+        mentorTips: [
+          "I like space to explore, but I still need support and visibility.",
+          "It helps when I can check in before problems become too large.",
+          "I benefit from encouragement alongside flexibility."
+        ]
+      },
+      ASM: {
+        title: "The Reflective Independent",
+        axes: "Autonomous + Supportive + Mentor-close",
+        summary: "You value both independence and a warm, trusting mentorship relationship. You want room to grow, but not in an emotionally harsh environment.",
+        fit: "You may do best in smaller labs with emotionally intelligent mentors who can give you room without neglecting you. You value autonomy, but you do not want it to come at the cost of trust and connection.",
+        strengths: [
+          "You may be self-aware and relationship-sensitive.",
+          "You can grow deeply in small, supportive lab environments.",
+          "You may work well with mentors who combine trust with responsiveness."
+        ],
+        risks: [
+          "You may drift if support exists but structure is too weak.",
+          "You may avoid difficult feedback if it feels emotionally uncomfortable.",
+          "Mentor fit may be especially important for your success."
+        ],
+        bestLab: [
+          "Smaller lab with emotionally intelligent PI",
+          "Culture that allows independence without neglect",
+          "Regular but not overbearing mentorship",
+          "Warm, trust-based environment"
+        ],
+        growthAdvice: [
+          "Ask for clearer expectations when needed.",
+          "Learn to tolerate some discomfort in feedback.",
+          "Remember that support and challenge do not have to be opposites."
+        ],
+        mentorTips: [
+          "I value trust, warmth, and room to think independently.",
+          "I do best when feedback is honest but not emotionally harsh.",
+          "Regular alignment helps me stay grounded without feeling controlled."
+        ]
+      }
+    };
+
+    const scoredContainer = document.getElementById("scoredQuestions");
+    const optionalContainer = document.getElementById("optionalQuestions");
+    const answeredCountEl = document.getElementById("answeredCount");
+    const totalCountEl = document.getElementById("totalCount");
+    const progressFillEl = document.getElementById("progressFill");
+    const resultBtn = document.getElementById("resultBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const retakeBtn = document.getElementById("retakeBtn");
+    const resultCard = document.getElementById("resultCard");
+    const errorMessage = document.getElementById("errorMessage");
+
+    function renderQuestionCard(question, index, isOptional = false) {
+      const card = document.createElement("div");
+      card.className = "question-card";
+
+      const tagText = isOptional ? "Optional profile note" : `${question.axis[0].toUpperCase() + question.axis.slice(1)} axis`;
+      card.innerHTML = `
+        <div class="question-header">
+          <div class="q-number">${index + 1}</div>
+          <div>
+            <p class="question-text">${question.text}</p>
+            <div class="question-note">${isOptional ? "Helps personalize your result." : question.note}</div>
+          </div>
+        </div>
+        <div class="options">
+          ${scaleLabels.map((label, i) => `
+            <div class="option-item">
+              <input type="radio" id="${question.id}_${i+1}" name="${question.id}" value="${i+1}">
+              <label class="option-label" for="${question.id}_${i+1}">${label}</label>
+            </div>
+          `).join("")}
+        </div>
+        <div class="axis-tag">${tagText}</div>
+      `;
+      return card;
+    }
+
+    function renderAllQuestions() {
+      scoredQuestions.forEach((q, i) => scoredContainer.appendChild(renderQuestionCard(q, i, false)));
+      optionalQuestions.forEach((q, i) => optionalContainer.appendChild(renderQuestionCard(q, i, true)));
+      totalCountEl.textContent = scoredQuestions.length + optionalQuestions.length;
+    }
+
+    function getAnsweredCount() {
+      const allQuestions = [...scoredQuestions, ...optionalQuestions];
+      let answered = 0;
+      allQuestions.forEach(q => {
+        if (document.querySelector(`input[name="${q.id}"]:checked`)) answered++;
+      });
+      return answered;
+    }
+
+    function updateProgress() {
+      const total = scoredQuestions.length + optionalQuestions.length;
+      const answered = getAnsweredCount();
+      answeredCountEl.textContent = answered;
+      progressFillEl.style.width = `${(answered / total) * 100}%`;
+    }
+
+    function setupProgressListeners() {
+      const allInputs = document.querySelectorAll('input[type="radio"]');
+      allInputs.forEach(input => {
+        input.addEventListener("change", updateProgress);
+      });
+    }
+
+    function convertAnswerToCenteredValue(answer) {
+      return parseInt(answer, 10) - 3; // 1..5 -> -2..2
+    }
+
+    function calculateScores() {
+      const scores = {
+        guidance: 0,
+        tone: 0,
+        ecology: 0
+      };
+
+      for (const q of scoredQuestions) {
+        const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+        if (!selected) return null;
+
+        const value = convertAnswerToCenteredValue(selected.value);
+
+        if (q.axis === "guidance") {
+          scores.guidance += q.direction === "D" ? value : -value;
+        } else if (q.axis === "tone") {
+          scores.tone += q.direction === "C" ? value : -value;
+        } else if (q.axis === "ecology") {
+          scores.ecology += q.direction === "R" ? value : -value;
+        }
+      }
+
+      return scores;
+    }
+
+    function axisToPercentage(score, questionCountForAxis) {
+      const min = -2 * questionCountForAxis;
+      const max =  2 * questionCountForAxis;
+      return Math.round(((score - min) / (max - min)) * 100);
+    }
+
+    function sidePercentage(score, questionCountForAxis, positiveLabel, negativeLabel) {
+      const rawPercent = axisToPercentage(score, questionCountForAxis);
+      if (score >= 0) {
+        return {
+          label: positiveLabel,
+          percent: rawPercent,
+          oppositePercent: 100 - rawPercent
+        };
+      }
+      return {
+        label: negativeLabel,
+        percent: 100 - rawPercent,
+        oppositePercent: rawPercent
+      };
+    }
+
+    function interpretAxis(score, posLabel, negLabel, balancedText) {
+      const questionCountForAxis = 6;
+      const pct = axisToPercentage(score, questionCountForAxis);
+      const abs = Math.abs(score);
+
+      if (abs <= 1) {
+        return {
+          dominant: balancedText,
+          text: `Your answers are fairly balanced between ${negLabel.toLowerCase()} and ${posLabel.toLowerCase()}.`
+        };
+      }
+
+      if (score > 0) {
+        return {
+          dominant: `${posLabel} lean`,
+          text: `You tend to prefer the ${posLabel.toLowerCase()} side, though not to the exclusion of the other side.`
+        };
+      }
+
+      return {
+        dominant: `${negLabel} lean`,
+        text: `You tend to prefer the ${negLabel.toLowerCase()} side, though not to the exclusion of the other side.`
+      };
+    }
+
+    function getTypeCode(scores) {
+      const guidanceCode = scores.guidance >= 0 ? "D" : "A";
+      const toneCode = scores.tone >= 0 ? "C" : "S";
+      const ecologyCode = scores.ecology >= 0 ? "R" : "M";
+      return guidanceCode + toneCode + ecologyCode;
+    }
+
+    function getOptionalValue(id) {
+      const selected = document.querySelector(`input[name="${id}"]:checked`);
+      return selected ? parseInt(selected.value, 10) : 3;
+    }
+
+    function optionalInsightText(type, value) {
+      if (type === "risk") {
+        if (value >= 4) return "You seem more comfortable with high-risk, high-reward projects than safer projects with predictable outcomes.";
+        if (value <= 2) return "You seem to prefer projects with clearer outcomes and lower uncertainty.";
+        return "You appear fairly balanced between exploratory and predictable project styles.";
+      }
+
+      if (type === "flexibility") {
+        if (value >= 4) return "You may perform better when your work schedule and routines are flexible.";
+        if (value <= 2) return "You may perform better with clearer structure and routine in your work habits.";
+        return "You appear able to work in either flexible or structured routines depending on the context.";
+      }
+
+      if (type === "worklife") {
+        if (value >= 4) return "Work-life boundaries appear important to your long-term fit and sustainability.";
+        if (value <= 2) return "You may be relatively comfortable prioritizing research intensity over work-life balance when needed.";
+        return "You seem to hold a fairly balanced view between research intensity and life outside the lab.";
+      }
+
+      if (type === "social") {
+        if (value >= 4) return "A socially active lab culture may contribute meaningfully to your sense of fit.";
+        if (value <= 2) return "You may prefer a lab culture that stays more focused on research than on social activities.";
+        return "Lab social culture may matter somewhat, but perhaps not as a primary deciding factor.";
+      }
+
+      if (type === "career") {
+        if (value >= 4) return "You seem more oriented toward academia as a long-term path.";
+        if (value <= 2) return "You seem open to a wider range of career paths beyond academia.";
+        return "You appear to be keeping both academic and non-academic paths reasonably open.";
+      }
+
+      if (type === "communication") {
+        if (value >= 4) return "You may prefer fast, low-friction communication methods such as Slack.";
+        if (value <= 2) return "You may prefer more formal or slower communication methods such as email.";
+        return "Your communication preference seems fairly flexible between quick and formal channels.";
+      }
+
+      return "";
+    }
+
+    function populateList(elementId, items) {
+      const el = document.getElementById(elementId);
+      el.innerHTML = "";
+      items.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        el.appendChild(li);
+      });
+    }
+
+    function renderAxisCards(scores) {
+      const axisGrid = document.getElementById("axisGrid");
+      axisGrid.innerHTML = "";
+
+      const guidancePct = sidePercentage(scores.guidance, 6, "Directed", "Autonomous");
+      const tonePct = sidePercentage(scores.tone, 6, "Challenging", "Supportive");
+      const ecologyPct = sidePercentage(scores.ecology, 6, "Resource-rich", "Mentor-close");
+
+      const guidanceInterpret = interpretAxis(scores.guidance, "Directed", "Autonomous", "Balanced");
+      const toneInterpret = interpretAxis(scores.tone, "Challenging", "Supportive", "Balanced");
+      const ecologyInterpret = interpretAxis(scores.ecology, "Resource-rich", "Mentor-close", "Balanced");
+
+      const cards = [
         {
-          text: "I learn best when someone is emotionally encouraging and helps me build confidence.",
-          weights: { supportive: 2, handsOn: 1 }
+          title: "Guidance Preference",
+          label: `${guidancePct.label} (${guidancePct.percent}%)`,
+          description: guidanceInterpret.text,
+          left: "Autonomous",
+          right: "Directed",
+          fill: axisToPercentage(scores.guidance, 6)
         },
         {
-          text: "I grow when someone pushes me with high standards and honest feedback.",
-          weights: { challenging: 2, strategic: 1 }
+          title: "Feedback Tone",
+          label: `${tonePct.label} (${tonePct.percent}%)`,
+          description: toneInterpret.text,
+          left: "Supportive",
+          right: "Challenging",
+          fill: axisToPercentage(scores.tone, 6)
         },
         {
-          text: "I prefer mentors who help me see the big picture and long-term direction.",
-          weights: { strategic: 2, supportive: 1 }
-        },
-        {
-          text: "I appreciate mentors who give concrete advice and practical next steps.",
-          weights: { handsOn: 2, strategic: 1 }
-        },
-        {
-          text: "When I struggle, I want a mentor who first understands how I’m feeling.",
-          weights: { supportive: 2 }
-        },
-        {
-          text: "I don’t mind being challenged directly if it helps me improve faster.",
-          weights: { challenging: 2 }
-        },
-        {
-          text: "I feel more motivated when I know how today’s effort connects to my future goals.",
-          weights: { strategic: 2 }
-        },
-        {
-          text: "I prefer examples, demonstrations, and specific guidance over abstract advice.",
-          weights: { handsOn: 2 }
-        },
-        {
-          text: "Too much criticism can discourage me, even if it is meant to help.",
-          weights: { supportive: 2 }
-        },
-        {
-          text: "I respect mentors who are demanding and expect me to rise to the occasion.",
-          weights: { challenging: 2 }
-        },
-        {
-          text: "I value structure, planning, and clear milestones in mentorship.",
-          weights: { strategic: 2, handsOn: 1 }
-        },
-        {
-          text: "I like mentors who help me solve real problems step by step.",
-          weights: { handsOn: 2 }
+          title: "Lab Ecology",
+          label: `${ecologyPct.label} (${ecologyPct.percent}%)`,
+          description: ecologyInterpret.text,
+          left: "Mentor-close",
+          right: "Resource-rich",
+          fill: axisToPercentage(scores.ecology, 6)
         }
       ];
 
-      const mentorStyles = {
-        supportive: {
-          title: "Supportive Mentor",
-          summary: "You may thrive most with a mentor who is encouraging, empathetic, and relationship-centered.",
-          description:
-            "You likely benefit from mentorship that creates psychological safety and builds confidence. A supportive mentor can help you grow by making it easier to ask questions, recover from setbacks, and stay motivated.",
-          tips: [
-            "Be open about what kind of support helps you most—encouragement, reassurance, or regular check-ins.",
-            "Ask for constructive feedback too, so the mentorship stays warm but still growth-oriented.",
-            "When you feel stuck, explain both your emotional concern and the practical help you need.",
-            "You may also want to ask for clearer goals and expectations."
-          ]
-        },
-        challenging: {
-          title: "Challenging Mentor",
-          summary: "You may thrive most with a mentor who is direct, demanding, and growth-pushing.",
-          description:
-            "You likely respond well to mentors who set a high bar and push you beyond your comfort zone. A challenging mentor can help accelerate your growth through honest feedback and accountability.",
-          tips: [
-            "Let your mentor know that you welcome direct feedback.",
-            "Turn criticism into specific action steps.",
-            "Ask for examples of what strong performance looks like.",
-            "Make time to reflect on progress, not just shortcomings."
-          ]
-        },
-        strategic: {
-          title: "Strategic Mentor",
-          summary: "You may thrive most with a mentor who helps you think long-term, set direction, and prioritize wisely.",
-          description:
-            "You likely value mentorship that connects today’s work to a broader path. A strategic mentor can help you clarify goals, identify priorities, and make smarter long-term decisions.",
-          tips: [
-            "Ask big-picture questions about direction and long-term growth.",
-            "Request help turning large goals into smaller milestones.",
-            "Share where you think your current work is leading.",
-            "Ask directly for encouragement if you need more emotional support."
-          ]
-        },
-        handsOn: {
-          title: "Hands-on Mentor",
-          summary: "You may thrive most with a mentor who is practical, concrete, and actively involved in problem-solving.",
-          description:
-            "You likely learn best when guidance is specific and actionable. A hands-on mentor can help by demonstrating methods, offering examples, and helping you work through real challenges step by step.",
-          tips: [
-            "Come with specific questions so your mentor can give targeted help.",
-            "Ask for examples, templates, or demonstrations.",
-            "Use detailed guidance to build your own independent judgment.",
-            "After solving a problem, reflect on what principle you learned from it."
-          ]
-        }
-      };
-
-      const quizContainer = document.getElementById("quiz");
-      const submitBtn = document.getElementById("submitBtn");
-      const resultBox = document.getElementById("result");
-      const resultTitle = document.getElementById("resultTitle");
-      const resultSummary = document.getElementById("resultSummary");
-      const resultDescription = document.getElementById("resultDescription");
-      const tipsList = document.getElementById("tipsList");
-      const scoreBoard = document.getElementById("scoreBoard");
-
-      function renderQuiz() {
-        quizContainer.innerHTML = "";
-
-        const scaleLabels = [
-          "1 - Strongly disagree",
-          "2 - Disagree",
-          "3 - Neutral",
-          "4 - Agree",
-          "5 - Strongly agree"
-        ];
-
-        questions.forEach((q, index) => {
-          const card = document.createElement("div");
-          card.className = "question-card";
-
-          const questionText = document.createElement("div");
-          questionText.className = "question-text";
-          questionText.textContent = `${index + 1}. ${q.text}`;
-          card.appendChild(questionText);
-
-          const options = document.createElement("div");
-          options.className = "options";
-
-          for (let i = 1; i <= 5; i++) {
-            const optionItem = document.createElement("div");
-            optionItem.className = "option-item";
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = `question-${index}`;
-            input.id = `q${index}-opt${i}`;
-            input.value = i;
-
-            const label = document.createElement("label");
-            label.className = "option-label";
-            label.htmlFor = input.id;
-            label.textContent = scaleLabels[i - 1];
-
-            optionItem.appendChild(input);
-            optionItem.appendChild(label);
-            options.appendChild(optionItem);
-          }
-
-          card.appendChild(options);
-          quizContainer.appendChild(card);
-        });
-      }
-
-      function calculateScores() {
-        const scores = {
-          supportive: 0,
-          challenging: 0,
-          strategic: 0,
-          handsOn: 0
-        };
-
-        for (let i = 0; i < questions.length; i++) {
-          const selected = document.querySelector(`input[name="question-${i}"]:checked`);
-
-          if (!selected) {
-            alert(`Please answer question ${i + 1}.`);
-            return null;
-          }
-
-          const answerValue = parseInt(selected.value, 10);
-          const weights = questions[i].weights;
-
-          for (const style in weights) {
-            scores[style] += answerValue * weights[style];
-          }
-        }
-
-        return scores;
-      }
-
-      function getSortedStyles(scores) {
-        return Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      }
-
-      function renderResult(scores) {
-        const sorted = getSortedStyles(scores);
-        const topKey = sorted[0][0];
-        const secondKey = sorted[1][0];
-
-        const topStyle = mentorStyles[topKey];
-        const secondStyle = mentorStyles[secondKey];
-        const maxScore = sorted[0][1];
-
-        resultTitle.innerHTML = `Your Best Match: <span class="highlight">${topStyle.title}</span>`;
-        resultSummary.innerHTML = `${topStyle.summary}<br><br><strong>Secondary match:</strong> ${secondStyle.title}`;
-        resultDescription.textContent = topStyle.description;
-
-        tipsList.innerHTML = "";
-        topStyle.tips.forEach((tip) => {
-          const li = document.createElement("li");
-          li.textContent = tip;
-          tipsList.appendChild(li);
-        });
-
-        const styleNames = {
-          supportive: "Supportive Mentor",
-          challenging: "Challenging Mentor",
-          strategic: "Strategic Mentor",
-          handsOn: "Hands-on Mentor"
-        };
-
-        scoreBoard.innerHTML = "";
-        sorted.forEach(([key, score]) => {
-          const row = document.createElement("div");
-          row.className = "score-row";
-
-          const label = document.createElement("div");
-          label.innerHTML = `<strong>${styleNames[key]}</strong>: ${score}`;
-
-          const barBg = document.createElement("div");
-          barBg.className = "bar-bg";
-
-          const barFill = document.createElement("div");
-          barFill.className = "bar-fill";
-          barFill.style.width = `${(score / maxScore) * 100}%`;
-
-          barBg.appendChild(barFill);
-          row.appendChild(label);
-          row.appendChild(barBg);
-          scoreBoard.appendChild(row);
-        });
-
-        resultBox.style.display = "block";
-        resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-
-      window.restartQuiz = function () {
-        document.querySelectorAll('input[type="radio"]').forEach((radio) => {
-          radio.checked = false;
-        });
-        resultBox.style.display = "none";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      };
-
-      submitBtn.addEventListener("click", function () {
-        const scores = calculateScores();
-        if (scores) {
-          renderResult(scores);
-        }
+      cards.forEach(card => {
+        const div = document.createElement("div");
+        div.className = "axis-card";
+        div.innerHTML = `
+          <h4>${card.title}</h4>
+          <div class="axis-label">${card.label}</div>
+          <div class="axis-percent">${card.fill}%</div>
+          <div class="axis-description">${card.description}</div>
+          <div class="axis-meter">
+            <div class="axis-meter-fill" style="width:${card.fill}%"></div>
+          </div>
+          <div class="axis-scale">
+            <span>${card.left}</span>
+            <span>${card.right}</span>
+          </div>
+        `;
+        axisGrid.appendChild(div);
       });
+    }
 
-      renderQuiz();
-    });
+    function renderOptionalNotes() {
+      const notesGrid = document.getElementById("notesGrid");
+      notesGrid.innerHTML = "";
+
+      const notes = optionalQuestions.map(q => ({
+        title: q.text,
+        body: optionalInsightText(q.type, getOptionalValue(q.id))
+      }));
+
+      const displayNames = {
+        risk: "Project style",
+        flexibility: "Work structure",
+        worklife: "Work-life boundary",
+        social: "Lab culture",
+        career: "Career orientation",
+        communication: "Communication preference"
+      };
+
+      optionalQuestions.forEach(q => {
+        const note = document.createElement("div");
+        note.className = "note-card";
+        note.innerHTML = `
+          <h4>${displayNames[q.type]}</h4>
+          <p>${optionalInsightText(q.type, getOptionalValue(q.id))}</p>
+        `;
+        notesGrid.appendChild(note);
+      });
+    }
+
+    function renderResult(scores) {
+      const code = getTypeCode(scores);
+      const profile = typeProfiles[code];
+
+      document.getElementById("resultTitle").textContent = profile.title;
+      document.getElementById("resultCode").textContent = `${code} — ${profile.axes}`;
+      document.getElementById("resultSummary").textContent = profile.summary;
+      document.getElementById("fitText").textContent = profile.fit;
+
+      populateList("labList", profile.bestLab);
+      populateList("strengthsList", profile.strengths);
+      populateList("risksList", profile.risks);
+      populateList("growthList", profile.growthAdvice);
+      populateList("mentorTipsList", profile.mentorTips);
+
+      renderAxisCards(scores);
+      renderOptionalNotes();
+
+      resultCard.style.display = "block";
+      resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function handleResult() {
+      const scores = calculateScores();
+      if (!scores) {
+        errorMessage.style.display = "block";
+        errorMessage.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      errorMessage.style.display = "none";
+      renderResult(scores);
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+      });
+      updateProgress();
+      errorMessage.style.display = "none";
+      resultCard.style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    renderAllQuestions();
+    setupProgressListeners();
+    updateProgress();
+
+    resultBtn.addEventListener("click", handleResult);
+    resetBtn.addEventListener("click", resetQuiz);
+    retakeBtn.addEventListener("click", resetQuiz);
   </script>
 </body>
 </html>
